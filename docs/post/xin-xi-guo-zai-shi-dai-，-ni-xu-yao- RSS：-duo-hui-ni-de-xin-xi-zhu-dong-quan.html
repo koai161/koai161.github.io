@@ -10,14 +10,14 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="你是否厌倦了这样的场景？
+<meta name="description" content=" 你是否厌倦了这样的场景？
 • 为了关注几个喜欢的博主/UP主，手机里塞满了各种APP，通知栏被无关推送淹没？
 • 想了解某个行业动态，却要在十几个网站和公众号里大海捞针？
 • 刚打开新闻APP想看点资讯，却被算法推荐的无聊短视频和标题党内容消耗了半小时？
 • 担心错过重要更新（比如喜欢的漫画更新、偶像动态、学术期刊发布），但又不想时刻刷新？
 有一个诞生于互联网上古时代，却历久弥新的工具，正是解决这些痛点的利器——它就是 RSS。">
 <meta property="og:title" content="信息过载时代，你需要 RSS：夺回你的信息主动权">
-<meta property="og:description" content="你是否厌倦了这样的场景？
+<meta property="og:description" content=" 你是否厌倦了这样的场景？
 • 为了关注几个喜欢的博主/UP主，手机里塞满了各种APP，通知栏被无关推送淹没？
 • 想了解某个行业动态，却要在十几个网站和公众号里大海捞针？
 • 刚打开新闻APP想看点资讯，却被算法推荐的无聊短视频和标题党内容消耗了半小时？
@@ -194,6 +194,7 @@ document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
 function openComments(){
     cm=document.getElementById("comments");
     cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
     cmButton.innerHTML="loading";
     span=document.createElement("span");
     span.setAttribute("class","AnimatedEllipsis");
