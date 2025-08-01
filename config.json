@@ -4,4 +4,6 @@
     "avatarUrl":"https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAJb7GiMkJucaFIIK8Yr-CHarx0kWOvtAAJzGwACWZ9pVIaSMLWmL8NZNgQ.jpg",
     "GMEEK_VERSION":"last"
     "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>",
+    "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/articletoc.js'></script>",
+
 }
