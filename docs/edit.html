@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 编辑器</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --gray: #6c757d;
+            --border: #e0e0e0;
+            --editor-bg: #ffffff;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--dark);
+            color: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 i {
+            color: #4cc9f0;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-group h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group h3 i {
+            color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            border: none;
+            background: #f0f5ff;
+            color: var(--dark);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .editor-panels {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-header {
+            background: var(--light);
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+        }
+
+        .panel-content {
+            padding: 0;
+            height: 400px;
+        }
+
+        #editor {
+            height: 100%;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .preview-container {
+            background: #fcfcfc;
+            padding: 15px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        #preview {
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        #preview h1, #preview h2, #preview h3 {
+            margin-top: 1.2em;
+            margin-bottom: 0.8em;
+            color: var(--dark);
+        }
+
+        #preview h1 {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        #preview table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        #preview th {
+            background: var(--primary);
+            color: white;
+            text-align: left;
+            padding: 10px 12px;
+        }
+
+        #preview td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        #preview tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        #preview code {
+            background: #f5f7fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        #preview blockquote {
+            border-left: 4px solid var(--primary);
+            background: #f8f9fa;
+            padding: 12px 15px;
+            margin: 15px 0;
+        }
+
+        #preview img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        /* GitHub风格强调块样式 */
+        .gh-alert {
+            padding: 16px;
+            margin: 16px 0;
+            border-left: 4px solid #d0d7de;
+            border-radius: 6px;
+        }
+        
+        .gh-alert p {
+            margin: 8px 0;
+        }
+        
+        .gh-alert p:first-child {
+            font-weight: 600;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .gh-alert.note {
+            background-color: #ddf4ff;
+            border-left-color: #0969da;
+        }
+        
+        .gh-alert.tip {
+            background-color: #e6f7d9;
+            border-left-color: #1a7f37;
+        }
+        
+        .gh-alert.important {
+            background-color: #f0e7ff;
+            border-left-color: #8250df;
+        }
+        
+        .gh-alert.warning {
+            background-color: #fff8c5;
+            border-left-color: #bf8700;
+        }
+        
+        .gh-alert.caution {
+            background-color: #ffebe9;
+            border-left-color: #cf222e;
+        }
+        
+        /* 暗色主题下的样式 */
+        .toastui-editor-dark .gh-alert.note {
+            background-color: rgba(9, 105, 218, 0.15);
+            border-left-color: #0969da;
+        }
+        
+        .toastui-editor-dark .gh-alert.tip {
+            background-color: rgba(26, 127, 55, 0.15);
+            border-left-color: #1a7f37;
+        }
+        
+        .toastui-editor-dark .gh-alert.important {
+            background-color: rgba(130, 80, 223, 0.15);
+            border-left-color: #8250df;
+        }
+        
+        .toastui-editor-dark .gh-alert.warning {
+            background-color: rgba(191, 135, 0, 0.15);
+            border-left-color: #bf8700;
+        }
+        
+        .toastui极-editor-dark .gh-alert.caution {
+            background-color: rgba(207, 34, 46, 0.15);
+            border-left-color: #cf222e;
+        }
+
+        #upload-status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0 0;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .upload-success {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .upload-error {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .image-drop-area {
+            border: 2px dashed #4361ee;
+            border-radius: 8px;
+            padding: 20px 15px;
+            text-align: center;
+            background: rgba(67, 97, 238, 0.05);
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-drop-area:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .image-drop-area i {
+            font-size: 2rem;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .drag-over {
+            background: rgba(67, 97, 238, 0.2) !important;
+        }
+
+        .token-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .token-section.show {
+            display: block;
+        }
+
+        .token-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .token-label {
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .token-value {
+            flex: 1;
+            font-family: monospace;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .token-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* 表格编辑器样式 */
+        .table-editor {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+            display: none;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .table-preview {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .table-preview th, .table-preview td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table-preview th {
+            background-color: #f2f2f2;
+        }
+
+        /* 强调块模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .editor-panels {
+                flex-direction: row;
+            }
+            
+            .panel {
+                flex: 1;
+            }
+            
+            .panel-content {
+                height: 500px;
+            }
+            
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo-container">
+                    <i class="mdi mdi-language-markdown"></i>
+                    <h1>Markdown 编辑器</h1>
+                </div>
+                <p class="subtitle">所见即所得 · 表格优化 · 图片图床</p>
+            </极div>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <h3><i class="mdi mdi-pencil"></i> 编辑操作</h3>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="save-md">
+                        <i class="mdi mdi-content-save"></i>保存
+                    </button>
+                    <button class="btn" id="clear-content">
+                        <i class="mdi mdi-delete"></i>清空
+                    </button>
+                    <button class="btn" id="copy-content">
+                        <i class="mdi mdi-content-copy"></i>复制
+                    </button>
+                    <button class="btn btn-warning" id="mode-toggle">
+                        <i class="mdi mdi-eye"></i>切换模式
+                    </button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3><i class="mdi mdi-image"></i> 图片上传</h3>
+                <div class="image-drop-area" id="drop-area">
+                    <i class="mdi mdi-cloud-upload"></i>
+                    <h3>拖放图片到此处上传</h3>
+                    <p>或点击选择图片文件</p>
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="token-section" id="token-section">
+                    <div class="token-row">
+                        <div class="token-label">临时Token：</div>
+                        <div class="token-value" id="temp-token">未获取</div>
+                    </div>
+                    <div class="token-row">
+                        <div class="token-label">有效期至：</div>
+                        <div class="token-value" id="token-expiry">未获取</div>
+                    </div>
+                    <div class="token-actions">
+                        <button class="btn" id="get-token-btn">
+                            <i class="mdi mdi-refresh"></i>获取新Token
+                        </button>
+                        <button class="btn" id="clear-token-btn">
+                            <i class="mdi mdi-delete"></i>清除Token
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="upload-status"></div>
+            </div>
+            
+            <div class="control-group">
+                <h3><i class="mdi mdi-star"></i> Gmeek 功能</h3>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="insert-highlight">
+                        <i class="mdi mdi-format-color-highlight"></i>强调块
+                    </button>
+                    <button class="btn btn-primary" id="insert-table">
+                        <i class="mdi mdi-table"></i>插入表格
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 表格编辑器 -->
+            <div class="table-editor" id="table-editor">
+                <h3><i class="mdi mdi-table-edit"></i> 表格编辑器</h3>
+                <div class="table-controls">
+                    <button class="btn" id="add-row-btn">
+                        <i class="mdi mdi-table-row-plus-after"></i>添加行
+                    </button>
+                    <button class="btn" id="add-col-btn">
+                        <i class="mdi mdi-table-column-plus-after"></i>添加列
+                    </button>
+                    <button class="btn" id="remove-row-btn">
+                        <i class="mdi mdi-table-row-remove"></i>删除行
+                    </button>
+                    <button class="btn" id="remove-col-btn">
+                        <i class="mdi mdi-table-column-remove"></i>删除列
+                    </button>
+                    <button class="btn btn-primary" id="insert-table-btn">
+                        <i class="mdi mdi-check"></i>插入表格
+                    </button>
+                </div>
+                <table class="table-preview" id="table-preview">
+                    <thead>
+                        <tr>
+                            <th>标题1</th>
+                            <th>标题2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>内容1</td>
+                            <td>内容2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="editor-panels">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="mdi mdi-code-json"></i> 编辑区
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div id="editor"></div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="mdi mdi-eye"></i> 预览
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div id="preview" class="preview-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 Gmeek Markdown 编辑器 | <a href="https://blog.meekdai.com" target="_blank">Gmeek文档</a></p>
+        </footer>
+    </div>
+
+    <!-- 强调块模态框 -->
+    <div class="modal" id="highlight-modal">
+        <div class="modal-content">
+            <div style="margin-bottom: 20px;">
+                <h2 style="color: var(--dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="mdi mdi-format-color-highlight"></i> 插入强调块
+                </h2>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">选择强调类型</label>
+                    <select id="highlight-type" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+                        <option value="note">提示 (note)</option>
+                        <option value="tip">技巧 (tip)</option>
+                        <option value="important">重要 (important)</option>
+                        <option value="warning">警告 (warning)</option>
+                        <option value="caution">注意 (caution)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">强调内容</label>
+                    <textarea id="highlight-content" placeholder="输入强调的内容..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; min-height: 120px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="insert-highlight-btn" style="flex: 1;">插入</button>
+                    <button class="btn" id="cancel-highlight" style="flex: 1;">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast UI Editor -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script>
+        // 用户授权Token
+        const USER_TOKEN = "1407|fXM2kpcU8VmoRL09K9tqa3iIsi4BrWXKPr8ftWxW";
+        // API基础URL
+        const API_BASE_URL = "https://picui.cn/api/v1";
+        // 临时上传Token
+        let tempToken = null;
+        let tokenExpiry = null;
+
+        // DOM元素
+        const tokenSection = document.getElementById('token-section');
+        const tempTokenElement = document.getElementById('temp-token');
+        const tokenExpiryElement = document.getElementById('token-expiry');
+        const getTokenBtn = document.getElementById('get-token-btn');
+        const clearTokenBtn = document.getElementById('clear-token-btn');
+        const tableEditor = document.getElementById('table-editor');
+        const tablePreview = document.getElementById('table-preview');
+        const highlightModal = document.getElementById('highlight-modal');
+
+        // 自定义渲染器 - 处理强调块
+        const customHTMLRenderer = {
+            htmlBlock: {
+                iframe(node) {
+                    return [
+                        {
+                            type: 'openTag',
+                            tagName: 'div',
+                            outerNewLine: true,
+                            classNames: ['gh-alert', node.literal.match(/class="gh-alert (\w+)"/)[1]]
+                        },
+                        {
+                            type: 'html',
+                            content: node.literal
+                        },
+                        {
+                            type: 'closeTag',
+                            tagName: 'div',
+                            outerNewLine: true
+                        }
+                    ];
+                }
+            }
+        };
+
+        // 初始化编辑器
+        const editor = new toastui.Editor({
+            el: document.querySelector('#editor'),
+            height: '100%',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            usageStatistics: false,
+            hideModeSwitch: false,
+            customHTMLRenderer: customHTMLRenderer,
+            hooks: {
+                addImageBlobHook: function (blob, callback) {
+                    handleImageUpload(blob, callback);
+                }
+            }
+        });
+
+        // 修复预览显示问题
+        editor.on('change', function() {
+            document.getElementById('preview').innerHTML = 
+                `<div class="toastui-editor-contents">${editor.getHTML()}</div>`;
+        });
+
+        // 获取临时上传Token
+        async function getUploadToken() {
+            const uploadStatus = document.getElementById('upload-status');
+            uploadStatus.style.display = 'flex';
+            uploadStatus.classList.remove('upload-success', 'upload-error');
+            uploadStatus.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> 获取临时Token中...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/images/tokens`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${USER_TOKEN}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        num: 1,
+                        seconds: 600 // 10分钟有效期
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status && data.data.tokens && data.data.tokens.length > 0) {
+                    tempToken = data.data.tokens[0].token;
+                    tokenExpiry = new Date(data.data.tokens[0].expired_at);
+                    
+                    // 显示Token信息
+                    tempTokenElement.textContent = tempToken;
+                    tokenExpiryElement.textContent = tokenExpiry.toLocaleString();
+                    tokenSection.classList.add('show');
+                    
+                    uploadStatus.classList.add('upload-success');
+                    uploadStatus.innerHTML = `<i class="mdi mdi-check-circle"></i> 临时Token获取成功!`;
+                    
+                    // 设置10分钟有效期后自动清除
+                    const expiresIn = tokenExpiry.getTime() - Date.now();
+                    setTimeout(clearTempToken, expiresIn);
+                } else {
+                    throw new Error(data.message || '获取临时Token失败');
+                }
+            } catch (error) {
+                console.error('获取临时Token失败:', error);
+                uploadStatus.classList.add('upload-error');
+                uploadStatus.innerHTML = `<i class="mdi mdi-alert-circle"></i> 获取临时Token失败: ${error.message}`;
+            }
+            
+            setTimeout(() => {
+                uploadStatus.style.display = 'none';
+            }, 3000);
+        }
+
+        // 清除临时Token
+        function clearTempToken() {
+            tempToken = null;
+            tokenExpiry = null;
+            tokenSection.classList.remove('show');
+            tempTokenElement.textContent = '未获取';
+            tokenExpiryElement.textContent = '未获取';
+        }
+
+        // 图片上传处理
+        async function handleImageUpload(blob, callback) {
+            const uploadStatus = document.getElementById('upload-status');
+            uploadStatus.style.display = 'flex';
+            uploadStatus.classList.remove('upload-success', 'upload-error');
+            
+            try {
+                // 如果没有临时Token或已过期，则获取新Token
+                if (!tempToken || (tokenExpiry && new Date() > tokenExpiry)) {
+                    await getUploadToken();
+                }
+                
+                if (!tempToken) {
+                    throw new Error('缺少有效的临时上传Token');
+                }
+                
+                uploadStatus.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> 图片上传中...';
+                
+                // 创建FormData对象
+                const formData = new FormData();
+                formData.append('file', blob);
+                formData.append('token', tempToken);  // 添加临时Token到表单数据
+                formData.append('permission', 1);
+                
+                // 调用图床API
+                const response = await fetch(`${API_BASE_URL}/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${USER_TOKEN}`,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === true) {
+                    uploadStatus.classList.add('upload-success');
+                    uploadStatus.innerHTML = `<i class="mdi mdi-check-circle"></i> 图片上传成功!`;
+                    // 返回结构中的链接在data.links中
+                    const markdownImage = `![](${data.data.links.url})`;
+                    callback(markdownImage, '图片描述');
+                } else {
+                    throw new Error(data.message || '图片上传失败');
+                }
+            } catch (error) {
+                console.error('图片上传错误:', error);
+                uploadStatus.classList.add('upload-error');
+                uploadStatus.innerHTML = `<i class="mdi mdi-alert-circle"></i> 上传失败: ${error.message}`;
+            }
+            
+            setTimeout(() => {
+                uploadStatus.style.display = 'none';
+            }, 3000);
+        }
+
+        // 表格操作函数
+        function addTableRow() {
+            const row = tablePreview.insertRow();
+            const colCount = tablePreview.rows[0].cells.length;
+            
+            for (let i = 0; i < colCount; i++) {
+                const cell = row.insertCell();
+                cell.contentEditable = true;
+                cell.textContent = '新内容';
+            }
+        }
+        
+        function addTableColumn() {
+            const rows = tablePreview.rows;
+            const headerRow = rows[0];
+            
+            // 添加表头单元格
+            const headerCell = document.createElement('th');
+            headerCell.textContent = '新标题';
+            headerRow.appendChild(headerCell);
+            
+            // 添加数据行单元格
+            for (let i = 1; i < rows.length; i++) {
+                const cell = document.createElement('td');
+                cell.contentEditable = true;
+                cell.textContent = '新内容';
+                rows[i].appendChild(cell);
+            }
+        }
+        
+        function removeTableRow() {
+            const rowCount = tablePreview.rows.length;
+            if (rowCount > 2) { // 保留至少一行数据
+                tablePreview.deleteRow(rowCount - 1);
+            }
+        }
+        
+        function removeTableColumn() {
+            const colCount = tablePreview.rows[0].cells.length;
+            if (colCount > 1) { // 保留至少一列
+                for (let i = 0; i < tablePreview.rows.length; i++) {
+                    tablePreview.rows[i].deleteCell(colCount - 1);
+                }
+            }
+        }
+        
+        function insertTableToEditor() {
+            let markdownTable = '';
+            
+            // 构建表头
+            const headerRow = tablePreview.rows[0];
+            markdownTable += '|';
+            for (let i = 0; i < headerRow.cells.length; i++) {
+                markdownTable += ` ${headerRow.cells[i].textContent} |`;
+            }
+            markdownTable += '\n';
+            
+            // 构建分隔行
+            markdownTable += '|';
+            for (let i = 0; i < headerRow.cells.length; i++) {
+                markdownTable += ' --- |';
+            }
+            markdownTable += '\n';
+            
+            // 构建数据行
+            for (let i = 1; i < tablePreview.rows.length; i++) {
+                const row = tablePreview.rows[i];
+                markdownTable += '|';
+                for (let j = 0; j < row.cells.length; j++) {
+                    markdownTable += ` ${row.cells[j].textContent} |`;
+                }
+                markdownTable += '\n';
+            }
+            
+            // 插入到编辑器
+            editor.insertText('\n' + markdownTable + '\n');
+            
+            // 隐藏表格编辑器
+            tableEditor.style.display = 'none';
+        }
+
+        // 事件监听器
+        getTokenBtn.addEventListener('click', getUploadToken);
+        clearTokenBtn.addEventListener('click', clearTempToken);
+        
+        // 切换编辑器模式
+        document.getElementById('mode-toggle').addEventListener('click', function() {
+            const currentMode = editor.getCurrentPreviewStyle();
+            if (currentMode === 'vertical') {
+                editor.changePreviewStyle('tab');
+            } else {
+                editor.changePreviewStyle('vertical');
+            }
+        });
+
+        // 保存Markdown内容
+        document.getElementById('save-md').addEventListener('click', function() {
+            const markdownContent = editor.getMarkdown();
+            const blob = new Blob([markdownContent], {type: 'text/markdown'});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gmeek-article.md';
+            document.body.appendChild(a);
+            a.click();
+            
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // 清空内容
+        document.getElementById('clear-content').addEventListener('click', function() {
+            if (confirm('确定要清空所有内容吗？')) {
+                editor.setMarkdown('');
+            }
+        });
+
+        // 复制内容
+        document.getElementById('copy-content').addEventListener('click', function() {
+            const markdownContent = editor.getMarkdown();
+            navigator.clipboard.writeText(markdownContent).then(() => {
+                alert('内容已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动复制内容');
+            });
+        });
+
+        // 插入高亮
+        document.getElementById('insert-highlight').addEventListener('click', function() {
+            highlightModal.style.display = 'flex';
+        });
+
+        // 取消高亮
+        document.getElementById('cancel-highlight').addEventListener('click', function() {
+            highlightModal.style.display = 'none';
+        });
+
+        // 插入高亮内容
+        document.getElementById('insert-highlight-btn').addEventListener('click', function() {
+            const type = document.getElementById('highlight-type').value;
+            const content = document.getElementById('highlight-content').value;
+            
+            if (content.trim()) {
+                const highlightText = 
+`<div class="gh-alert ${type}">
+    <p><strong>${type.toUpperCase()}</strong></p>
+    <p>${content}</p>
+</div>`;
+                editor.insertText(highlightText);
+                highlightModal.style.display = 'none';
+                document.getElementById('highlight-content').value = '';
+            } else {
+                alert('请填写强调内容');
+            }
+        });
+
+        // 插入表格
+        document.getElementById('insert-table').addEventListener('click', function() {
+            tableEditor.style.display = 'block';
+        });
+
+        // 表格操作按钮
+        document.getElementById('add-row-btn').addEventListener('click', addTableRow);
+        document.getElementById('add-col-btn').addEventListener('click', addTableColumn);
+        document.getElementById('remove-row-btn').addEventListener('click', removeTableRow);
+        document.getElementById('remove-col-btn').addEventListener('click', removeTableColumn);
+        document.getElementById('insert-table-btn').addEventListener('click', insertTableToEditor);
+
+        // 手动图片上传
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('image-input');
+        
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.match('image.*')) {
+                handleImageUpload(file, (url) => {
+                    const markdownImage = `![](${url})`;
+                    editor.insertText('\n' + markdownImage + '\n');
+                    this.value = '';
+                });
+            }
+        });
+
+        // 拖放功能
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('drag-over');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('drag-over');
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type.match('image.*')) {
+                handleImageUpload(file, (url) => {
+                    const markdownImage = `![](${url})`;
+                    editor.insertText('\n' + markdownImage + '\n');
+                });
+            }
+        }
+
+        // 初始化编辑器内容
+        editor.setMarkdown(`# Gmeek Markdown 编辑器
+
+## 开始撰写您的内容...
+
+### 功能特点
+- 所见即所得编辑体验
+- 表格编辑优化
+- 图片上传至图床
+- 支持Gmeek特殊语法
+
+## 示例表格
+
+| 功能 | 描述 |
+|------|------|
+| 强调块 | 使用 {% note %}...{% endnote %} |
+| 表格 | 使用表格编辑器创建专业表格 |
+| 图片 | 拖放或点击上传图片 `);
+
+        // 移动端优化：隐藏部分按钮文本
+        function updateButtonText() {
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('.btn').forEach(btn => {
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        btn.innerHTML = icon.outerHTML;
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('resize', updateButtonText);
+        updateButtonText();
+    </script>
+</body>
+</html>
