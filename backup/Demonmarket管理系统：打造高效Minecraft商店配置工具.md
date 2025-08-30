@@ -18,7 +18,7 @@
 **### 前端架构**
 ![前端架构](https://img.cdn1.vip/i/68b297a3a064b_1756534691.png)
 
-项目网址：[https://koai161.github.io/Demonmarket.html](https://koai161.github.io/Demonmarket.html)
+项目网址：[https://koai161.github.io/minehelp-navigation/Demonmarket.html](https://koai161.github.io/minehelp-navigation/Demonmarket.html)
 
 Demonmarket插件1.21.8 worth.yml
 [https://www.123684.com/s/udaUVv-aZ3Td](https://www.123684.com/s/udaUVv-aZ3Td)
